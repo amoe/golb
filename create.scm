@@ -8,6 +8,8 @@
 
 (define *create-template-path*         ; For some reason, libxslt wants this to
   "/var/plt-web-server/create.xsl")    ; be absolute.
+(define *confirm-template-path*
+  "/var/plt-web-server/confirm.xsl")
 
 (provide interface-version
          timeout
@@ -23,9 +25,10 @@
 
 (define (mode:confirm req)
   (make-response/full 200 "OK"
-                      (current-seconds) #"text/plain"
+                      (current-seconds) #"application/xhtml+xml"
                       '()
-                      (list "Accepted form input")))
+                      (list
+                       (process-static-template *confirm-template-path*))))
 
 
 (define (mode:create req k-url)
@@ -42,6 +45,10 @@
          (res (xslt:apply-stylesheet cur doc #f)))
     (let-values (((r1 r2 r3) (xslt:save-result-to-string res cur)))
       r2)))
+
+(define (process-static-template template-path)
+  (process-template template-path
+                           "<?xml version=\"1.0\"?> <root/>"))
 
 (define (k-url->xml k-url)
   (xml->string
