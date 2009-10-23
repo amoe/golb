@@ -12,6 +12,7 @@
       <p>All entries are shown below.</p>
 
       <xsl:for-each select="/entries/entry">
+        <p>Entry: <xsl:value-of select="position()"/></p>
         <blockquote>
           <xsl:value-of select="."/>
         </blockquote>
