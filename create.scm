@@ -17,18 +17,26 @@
 
 (define (start req)
   (send/back
-   (make-response/full 200 "OK"
-                       (current-seconds) #"text/html"   ; FIXME: change to real
-                       '()
-                       (list (mode:create)))))
+   (mode:confirm
+    (send/suspend (curry mode:create req)))))
 
-(define (mode:create)
+(define (mode:confirm req)
+  (make-response/full 200 "OK"
+                      (current-seconds) #"text/plain"
+                      '()
+                      (list "Accepted form input")))
+
+
+(define (mode:create req k-url)
   (let* ((cur (xslt:parse-stylesheet-file *create-template-path*))
-         (xml (k-url->document "foo"))
+         (xml (k-url->document k-url))
          (doc (xslt:parse-memory xml (string-length xml)))
          (res (xslt:apply-stylesheet cur doc #f)))
     (let-values (((r1 r2 r3) (xslt:save-result-to-string res cur)))
-      r2)))
+      (make-response/full 200 "OK"
+                          (current-seconds) #"text/html"
+                          '()
+                          (list r2)))))
 
 (define (k-url->document k-url)
   (format "<?xml version=\"1.0\"?> <k-url>~a</k-url>"
