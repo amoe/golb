@@ -29,15 +29,19 @@
 
 
 (define (mode:create req k-url)
-  (let* ((cur (xslt:parse-stylesheet-file *create-template-path*))
-         (xml (k-url->xml k-url))
-         (doc (xslt:parse-memory xml (string-length xml)))
+  (make-response/full 200 "OK"
+                      (current-seconds) #"application/xhtml+xml"
+                      '()
+                      (list
+                       (process-template *create-template-path*
+                                         (k-url->xml k-url)))))
+
+(define (process-template template-path input-xml)
+  (let* ((cur (xslt:parse-stylesheet-file template-path))
+         (doc (xslt:parse-memory input-xml (string-length input-xml)))
          (res (xslt:apply-stylesheet cur doc #f)))
     (let-values (((r1 r2 r3) (xslt:save-result-to-string res cur)))
-      (make-response/full 200 "OK"
-                          (current-seconds) #"application/xhtml+xml"
-                          '()
-                          (list r2)))))
+      r2)))
 
 (define (k-url->xml k-url)
   (xml->string
