@@ -40,17 +40,20 @@
                           (list r2)))))
 
 (define (k-url->xml k-url)
-  ;(format "<?xml version=\"1.0\"?> <k-url>~a</k-url>"
-  ;        k-url))
-
   (xml->string
    (xml:make-document
     (xml:make-prolog '() #f)
     (xml:make-element #f #f 'k-url '()
-                      (list (xml:make-pcdata #f #f k-url)))
+                      (list (xml:make-pcdata #f #f
+                                             (escape-string-for-xml k-url))))
     '())))
 
 (define (xml->string elt)
   (let ((os (open-output-string)))
     (xml:write-xml elt os)
+    (get-output-string os)))
+
+(define (escape-string-for-xml str)
+  (let ((os (open-output-string)))
+    (xml:write-xml/content (xml:xexpr->xml str) os)
     (get-output-string os)))
