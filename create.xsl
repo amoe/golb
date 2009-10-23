@@ -13,7 +13,7 @@
 
       <p>I will post to: <xsl:value-of select="/k-url"/></p>
       
-      <form>
+      <form method="post">
         <xsl:attribute name="action">
           <xsl:value-of select="/k-url"/>
         </xsl:attribute>

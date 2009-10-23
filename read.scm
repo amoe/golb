@@ -52,7 +52,7 @@
 
 (define (process-static-template template-path)
   (process-template template-path
-                           "<?xml version=\"1.0\"?> <root/>"))
+                    "<?xml version=\"1.0\"?> <root/>"))
 
 (define (xml->string elt)
   (let ((os (open-output-string)))

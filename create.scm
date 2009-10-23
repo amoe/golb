@@ -39,6 +39,15 @@
                        (process-template *create-template-path*
                                          (k-url->xml k-url)))))
 
+(define (k-url->xml k-url)
+  (xml->string
+   (xml:make-document
+    (xml:make-prolog '() #f)
+    (xml:make-element #f #f 'k-url '()
+                      (list (xml:make-pcdata #f #f
+                                             (escape-string-for-xml k-url))))
+    '())))
+
 (define (process-template template-path input-xml)
   (let* ((cur (xslt:parse-stylesheet-file template-path))
          (doc (xslt:parse-memory input-xml (string-length input-xml)))
@@ -49,15 +58,6 @@
 (define (process-static-template template-path)
   (process-template template-path
                            "<?xml version=\"1.0\"?> <root/>"))
-
-(define (k-url->xml k-url)
-  (xml->string
-   (xml:make-document
-    (xml:make-prolog '() #f)
-    (xml:make-element #f #f 'k-url '()
-                      (list (xml:make-pcdata #f #f
-                                             (escape-string-for-xml k-url))))
-    '())))
 
 (define (xml->string elt)
   (let ((os (open-output-string)))
