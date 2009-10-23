@@ -1,5 +1,6 @@
 #lang scheme
 
+(require web-server/http/request-structs)
 (require web-server/http/response-structs)
 (require web-server/servlet/web)
 
@@ -15,6 +16,8 @@
          timeout
          start)
 
+(define *store-path* "main.dat")
+
 (define interface-version 'v1)
 (define timeout 64)
 
@@ -24,12 +27,15 @@
     (send/suspend (curry mode:create req)))))
 
 (define (mode:confirm req)
+  (write-to-file (cons (get-body req) (get-store-value))
+                 *store-path*
+                 #:exists 'truncate)
+
   (make-response/full 200 "OK"
                       (current-seconds) #"application/xhtml+xml"
                       '()
                       (list
                        (process-static-template *confirm-template-path*))))
-
 
 (define (mode:create req k-url)
   (make-response/full 200 "OK"
@@ -38,6 +44,17 @@
                       (list
                        (process-template *create-template-path*
                                          (k-url->xml k-url)))))
+
+(define (get-body req)
+  (bytes->string/utf-8 (get-binding req #"body")))
+
+(define (get-store-value)
+  (with-handlers ((exn:fail? (lambda args '())))
+    (file->value *store-path*)))
+
+(define (get-binding req id)
+  (binding:form-value
+   (bindings-assq id (request-bindings/raw req))))
 
 (define (k-url->xml k-url)
   (xml->string
