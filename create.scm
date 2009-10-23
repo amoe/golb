@@ -4,6 +4,7 @@
 (require web-server/servlet/web)
 
 (require (prefix-in xslt: libxslt))
+(require (prefix-in xml: xml))
 
 (define *create-template-path*         ; For some reason, libxslt wants this to
   "/var/plt-web-server/create.xsl")    ; be absolute.
@@ -29,7 +30,7 @@
 
 (define (mode:create req k-url)
   (let* ((cur (xslt:parse-stylesheet-file *create-template-path*))
-         (xml (k-url->document k-url))
+         (xml (k-url->xml k-url))
          (doc (xslt:parse-memory xml (string-length xml)))
          (res (xslt:apply-stylesheet cur doc #f)))
     (let-values (((r1 r2 r3) (xslt:save-result-to-string res cur)))
@@ -38,6 +39,18 @@
                           '()
                           (list r2)))))
 
-(define (k-url->document k-url)
-  (format "<?xml version=\"1.0\"?> <k-url>~a</k-url>"
-          k-url))
+(define (k-url->xml k-url)
+  ;(format "<?xml version=\"1.0\"?> <k-url>~a</k-url>"
+  ;        k-url))
+
+  (xml->string
+   (xml:make-document
+    (xml:make-prolog '() #f)
+    (xml:make-element #f #f 'k-url '()
+                      (list (xml:make-pcdata #f #f k-url)))
+    '())))
+
+(define (xml->string elt)
+  (let ((os (open-output-string)))
+    (xml:write-xml elt os)
+    (get-output-string os)))
