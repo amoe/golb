@@ -4,7 +4,7 @@ host = localhost
 port = 8080
 refresh_url = conf/refresh-servlets
 
-obj = golb.scm static.scm skeleton.xhtml
+obj = golb.scm static.scm skeleton.xhtml create.scm create.xhtml
 
 all: install refresh_servlets
 
