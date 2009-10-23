@@ -11,11 +11,11 @@
       
       <p>All entries are shown below.</p>
 
-      <p>
+      <xsl:for-each select="/entries/entry">
         <blockquote>
-          <xsl:value-of select="/entry"/>
+          <xsl:value-of select="."/>
         </blockquote>
-      </p>
+      </xsl:for-each>
     </body>
   </html>
 </xsl:template>

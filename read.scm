@@ -21,23 +21,26 @@
                        '()
                        (list
                         (process-template *read-template-path*
-                                          (entry->xml (get-entries))))))
+                                          (entries->xml (get-entries))))))
 
 ; MODEL CODE
 
 (define (get-entries)
-  (with-handlers ((exn:fail? (lambda args "nowt")))
+  (with-handlers ((exn:fail? (lambda args '("foo" "bar"))))
     (file->value "main.dat")))
 
-(define (entry->xml body)
+(define (entries->xml entries)
   (xml->string
    (xml:make-document
     (xml:make-prolog '() #f)
-    (xml:make-element #f #f 'entry '()
-                      (list (xml:make-pcdata #f #f
-                                             (escape-string-for-xml body))))
+    (xml:make-element #f #f 'entries '()
+                      (map entry->element entries))
     '())))
 
+(define (entry->element body)
+  (xml:make-element #f #f 'entry '()
+                    (list (xml:make-pcdata #f #f
+                                           (escape-string-for-xml body)))))
 ; DISPLAY CODE
 
 (define (process-template template-path input-xml)
