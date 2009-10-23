@@ -10,8 +10,7 @@
 (define timeout 64)
 
 (define (start req)
-  (make-response/basic 403 "Forbidden"
+  (make-response/full 200 "OK"
                        (current-seconds) #"text/plain"
-                       '()))
-                        
-                       
+                       '()
+                       '("Hello, world!\n")))
