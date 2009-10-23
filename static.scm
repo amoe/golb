@@ -1,6 +1,7 @@
 #lang scheme
 
 (require web-server/http/response-structs)
+(require web-server/http/request-structs)
 (require web-server/servlet/web)
 
 (provide interface-version
@@ -10,11 +11,15 @@
 (define interface-version 'v1)
 (define timeout 64)
 
-(define *xhtml-path* "skeleton.xhtml")
-
 (define (start req)
-  (send/back
-   (make-response/full 200 "OK"
+  (let ((path (get-binding req #"path")))
+    (send/back
+     (make-response/full 200 "OK"
                        (current-seconds) #"application/xhtml+xml"
                        '()
-                       (list (file->bytes *xhtml-path*)))))
+                       (list
+                        (file->bytes (bytes->path path)))))))
+
+(define (get-binding req id)
+  (binding:form-value
+   (bindings-assq id (request-bindings/raw req))))
