@@ -35,7 +35,7 @@
          (res (xslt:apply-stylesheet cur doc #f)))
     (let-values (((r1 r2 r3) (xslt:save-result-to-string res cur)))
       (make-response/full 200 "OK"
-                          (current-seconds) #"text/html"
+                          (current-seconds) #"application/xhtml+xml"
                           '()
                           (list r2)))))
 
