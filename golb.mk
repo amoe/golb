@@ -5,7 +5,7 @@ port = 8080
 refresh_url = conf/refresh-servlets
 
 obj = golb.scm static.scm skeleton.xhtml create.scm create.xhtml create.xsl \
-      confirm.xsl read.scm read.xsl
+      confirm.xsl read.scm read.xsl delete.scm
 
 all: install refresh_servlets
 
