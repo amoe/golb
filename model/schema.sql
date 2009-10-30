@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS post;
+
+CREATE TABLE post (
+    id INT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(64) NOT NULL,
+    body TEXT(65536) NOT NULL
+    PRIMARY KEY (id)
+);
