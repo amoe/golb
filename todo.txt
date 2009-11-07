@@ -1,0 +1,6 @@
+Todos for later:
+
+Since the jazmysql and DBI layers don't do any testing, we need to
+manually check all SRFI-19 date objects that come out of the DB.
+Strange ones can be created, for instance 0000-00-00.  This will break
+confusingly when we try to 'date->string' it.
