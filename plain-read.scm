@@ -1,5 +1,6 @@
 #lang scheme
 
+(require web-server/http/request-structs)
 (require web-server/http/response-structs)
 (require srfi/19)
 
@@ -10,15 +11,14 @@
          timeout
          start)
 
-(define interface-version 'v1)
-(define timeout 64)
-
 (define *post-template*
 "Title: ~a
 Date: ~a
 
 ~a")
 
+(define interface-version 'v1)
+(define timeout 64)
 
 (define (start req)
   (let ((conn (connect 'jazmysql "localhost" 3306 "golb" "golb"
@@ -26,19 +26,29 @@ Date: ~a
     (make-response/full 200 "OK"
                         (current-seconds) #"text/plain"
                         '()
-                        (serve-plain-mainpage conn))))
+                        (serve-page req conn))))
 
-(define (serve-plain-mainpage conn)
-  (let* ((rs (get-posts conn))
-         (posts (record-set->alists rs)))
-    (list
-     "I'm listing the posts from the database.\n\n\n"
-     (string-join (map post->string posts)
-                  (string #\newline #\newline)))))
+(define (serve-page req conn)
+  (let ((id (get-binding req #"id")))
+    (list 
+     (post->string (first
+                    (record-set->alists
+                     (query conn "SELECT * FROM post WHERE id = ?blah"
+                            (list (cons 'blah id)))))))))
 
-(define (get-posts conn)
-  (query conn "SELECT * FROM post" '()))
+(define (get-binding req id)
+  (let ((ret (bindings-assq id (request-bindings/raw req))))
+    (if ret
+        (binding:form-value ret)
+        (error 'get-binding "binding not found: ~a" id))))
 
+
+(define (record-set->alists rs)
+  (map (curry row->alist (first rs)) (rest rs)))
+
+(define (row->alist cols row)
+  (map cons cols row))
+  
 (define (post->string post)
   (let ((date (cdr (assoc "date_" post))))
     (assert-valid-date date)
@@ -47,14 +57,6 @@ Date: ~a
             (date->string (timestamp->date (cdr (assoc "date_" post))
                                            (cdr (assoc "time_" post))))
             (cdr (assoc "body" post)))))
-  
-
-
-(define (record-set->alists rs)
-  (map (curry row->alist (first rs)) (rest rs)))
-
-(define (row->alist cols row)
-  (map cons cols row))
   
 (define (assert-valid-date d)
   (when (or (zero? (date-day d))

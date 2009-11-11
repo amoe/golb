@@ -4,3 +4,7 @@ Since the jazmysql and DBI layers don't do any testing, we need to
 manually check all SRFI-19 date objects that come out of the DB.
 Strange ones can be created, for instance 0000-00-00.  This will break
 confusingly when we try to 'date->string' it.
+
+Weirdly some results will turn up if we select on a random id without
+checking it.  So we have to make sure we use IDs of >=1 since 0 ids
+will always be selected for some reason?  Random.
