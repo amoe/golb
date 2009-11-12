@@ -54,8 +54,7 @@ Date: ~a
     (assert-valid-date date)
     (format *post-template*
             (cdr (assoc "title" post))
-            (date->string (timestamp->date (cdr (assoc "date_" post))
-                                           (cdr (assoc "time_" post))))
+            (date->string (cdr (assoc "date_" post)))
             (cdr (assoc "body" post)))))
   
 (define (assert-valid-date d)
