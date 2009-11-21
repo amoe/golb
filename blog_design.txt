@@ -1,0 +1,12 @@
+Blog
+----
+
+- Needs to be skinnable
+  - Each skin can be a CSS file.
+- Can store its details in a database.
+- Has to be a little AJAXy, unfortunately.
+- What are the core functions of a blog?
+  #1 is display entries.  This is undoubtedly the most important
+
+* You'll need to install libsqlite3-dev package on debian in order to
+  test the sqlite interface.
