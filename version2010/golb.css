@@ -1,0 +1,26 @@
+/* golb.css */
+
+body { background-color: #d3d3d3 }
+
+h1 {
+    color: teal;
+    text-align: center;
+}
+
+p {
+    font-family: "Verdana";
+    font-size: medium;
+}
+
+p:first-letter {
+    font-size: large;
+}
+
+div.entry {
+    margin-left: 4ex;
+}
+
+a:link    { color: blue }
+a:visited { color: red }
+a:hover   { color: green }
+a:active  { color: silver }
